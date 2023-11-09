@@ -25,6 +25,16 @@
                 board.appendChild(temp)
             }
         }
+
+        function showReaction(type, clickedBox) {
+            clickedBox.classList.add(type)
+            if(type !== "sucess") {
+                setTimeout(function(){
+                    clickedBox.classList.remove(type)
+                }, 800)
+            }
+        }
+
         const box = document.createElement("div")
         box.classList.add("box")
 
@@ -40,9 +50,28 @@
             newbox.addEventListener("click", function(){
                 
                 if(i == nb){
-                    newbox.classList.add("box-valid")
+                    newbox.classList.add("box-clicked")
+                    // 1 Si nb est égal au nmobre de boites du jeu
+                    if(nb == board.children.length){
+                        board.querySelectorAll(".box").forEach(function(box){
+                            showReaction("sucess", box)
+                        })
+                    }
                     nb++
                 }
+                //2 Si le numero de la boite est supérieur à nb
+                else if(i > nb){
+                    showReaction("error", newbox)
+                    nb =1
+                    board.querySelectorAll(".box-clicked").forEach(function(validBox){
+                        validBox.classList.remove("box-clicked")
+                    })
+                }
+                //3 Si le joueur clique sur une boite déjà grise
+                else{
+                    showReaction("notice", newbox)
+                }
+
             })
         }
 
