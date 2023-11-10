@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Mode HARD</title>
+</head>
+<body class="bodyHard">
+
+    <h1 class="h1">START TO PLAY NOW</h1>
+    <div>
+        <button class="buttonHome" onclick="window.location.href='mode.html'">HOME</button>
+    </div>
+    <p class="mode">MODE: HARD</p>
+    <div>
+        <button class="buttonRestart" onclick="window.location.href='easy.html'">PLAY AGAIN</button>
+    </div>
+    <div id="board"></div>
+
+    <script>
+        // Une boucle while pour demander un nombre valide au joueur
+        while (true) {
+            // Demande le nombre de boîtes de départ au joueur
+            numberOfBoxes = prompt("Veuillez entrer le nombre de boîtes de départ :");
+            // Convertie la valeur saisie en nombre
+            numberOfBoxes = parseInt(numberOfBoxes);
+
+            // Vérifie si la valeur est un nombre valide et supérieur à zéro
+            if (!isNaN(numberOfBoxes) && numberOfBoxes > 0) {
+                console.log("Nombre de boîtes de départ : " + numberOfBoxes);
+                break; // Sortir de la boucle si la valeur est valide
+            } else {
+                alert("Veuillez entrer un nombre valide et supérieur à zéro.");
+            }
+        }
+
+        function shuffleChildren(parent){
+            let i = board.children.length, k, temp
+            while(--i > 0){//on boucle tant que 1 oté de i est toujours positif
+                // k stocke un nombre aléatoire basé sur i
+                k = Math.floor(Math.random() * (i+1))
+                // temp pointe temporairement l'élément à la position k dans board
+                temp = board.children[k]
+                // remplace l'élément k pointé temporairement à la fin du contenu de board
+                board.children[k] = board.children[i]
+                // place l'élément k pointé temporairement à la fin du contenu de board
+                board.appendChild(temp)
+            }
+        }
+
+        function showReaction(type, clickedBox) {
+            clickedBox.classList.add(type)
+            if(type !== "sucess") {
+                setTimeout(function(){
+                    clickedBox.classList.remove(type)
+                }, 800)
+            }
+        }
+
+        const box = document.createElement("div")
+        box.classList.add("box")
+
+        const board = document.querySelector("#board")
+
+        let nb = 1
+        
+        for(let i= 1; i <= numberOfBoxes; i++){
+            let newbox = box.cloneNode()
+            newbox.innerText = i
+            board.appendChild(newbox)
+
+            newbox.addEventListener("click", function(){
+                
+                if(i == nb){
+                    newbox.classList.add("box-clicked")
+                    
+                    // Si nb est égal au nombre de boites du jeu
+                    if(nb == board.children.length){
+                        board.querySelectorAll(".box").forEach(function(box){
+                            showReaction("success", box)
+                            
+                        })
+                        
+                    }
+                    nb++
+                    shuffleChildren(board)
+                }
+                
+                // Si le numero de la boite est supérieur à nb
+                else if(i > nb){
+                    showReaction("error", newbox)
+                    alert("Vous avez perdu, veuillez recommencer.")
+                    shuffleChildren(board)
+                    nb =1
+                    board.querySelectorAll(".box-clicked").forEach(function(validBox){
+                        validBox.classList.remove("box-clicked")
+                    })
+                    
+                }
+                // Si le joueur clique sur une boite déjà grise
+                else{
+                    showReaction("notice", newbox)
+                }
+
+            })
+        }
+
+        shuffleChildren(board)
+
+    </script>
+    <div class="selMode">
+        <p>CHANGE YOUR MODE</p>
+    </div>
+    <div class="footer">
+        <button class="buttonMode" onclick="window.location.href='easy.html'">EASY</button>
+    </div>
+</body>
+</html>
